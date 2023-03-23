@@ -19,10 +19,10 @@ export default function Calendar() {
   const year = useRef(new Date().getFullYear());
   const [selectDate, setSelectDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-  const modalData = useRef<{[key: string]: string}>({
+  const modalData = useRef<{[key: string]: string|Date}>({
     title: "",
     description: "",
-    date: "",
+    date: new Date(),
     start: "",
     end: "",
   });
@@ -68,16 +68,14 @@ export default function Calendar() {
   }
 
   async function handleSubmit() {
-    const modalDate = new Date(modalData.current.date)
-    const modalStartTime = new Date(modalData.current.start)
-    const modalEndTime = new Date(modalData.current.end)
-    const year = modalDate.getFullYear();
-    const month = modalDate.getMonth() + 1;
-    const day = modalDate.getDate();
-    const startHour = modalStartTime.getHours();
-    const startMinutes = modalStartTime.getMinutes();
-    const endHour = modalEndTime.getHours();
-    const endMinutes = modalEndTime.getMinutes();
+    const date= new Date(modalData.current.date)
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+    const startHour = parseInt((modalData.current.start as string).split(":")[0]);
+    const startMinutes = parseInt((modalData.current.start as string).split(":")[1]);
+    const endHour = parseInt((modalData.current.end as string).split(":")[0]);
+    const endMinutes = parseInt((modalData.current.end as string).split(":")[1]);
     const start = new Date(year, month, day, startHour, startMinutes);
     const end = new Date(year, month, day, endHour, endMinutes);
     const { title, description } = modalData.current;
@@ -206,9 +204,10 @@ export default function Calendar() {
         open={open}
         setOpen={setOpen}
         title="Aggiungi un Appuntamento"
+        size="w-full md:max-w-lg"
       >
-        <div className="flex flex-row divide-x-2 my-5">
-          <div className="w-1/2 pr-5">
+        <div className="flex flex-col md:flex-row md:divide-x-2 md:my-5">
+          <div className="xs:w-full md:w-1/2 md:pr-5">
             <Input
               type={"text"}
               id="title"
@@ -224,7 +223,7 @@ export default function Calendar() {
               onChange={handleInput}
             />
           </div>
-          <div className="w-1/2 pl-5">
+          <div className="w-full md:w-1/2 md:pl-5">
             <Input
               type={"date"}
               id="date"
